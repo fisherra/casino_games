@@ -1,0 +1,68 @@
+---
+title: "Roulette Simulation"
+author: "Fisher Ankney"
+date: "4/24/2018"
+output: html_document
+---
+
+<br> 
+
+### Introduction 
+
+In this post, all about roulette! Now everyone knows the odds of roulette, bet on black, almost 50% chance, bet thirds, almsot a 33% chance, bet a number, no chance! Disecting the probability is easy, we know that the house will always win, sample size increases. Lets make a story out of it. three people at a roulette table with their own styles of playing. Phabian always bets $10 on black. Tammy always bets \$ on the middle third. Latigo always bets \$10 on his favorite number, 23. 
+
+How do they fair against each other after 10 spins? 100 spins? 1000 spins? 10,000 spins?!?
+number of wins, amount won, highest high, lowest low, that kind of thing. how many numbers go by before winnning on average for the three players. how long is their longest dry streak? how many wins in a row? 
+
+Going to finish up with creating a simple roulette function, allowing you to place your bet on a number or category, how much you bet on that spin. returns the number, if you win or lose, and your cumulative winnings. 
+
+also, how old are they for sitting through 10,000 spins of the roulette wheel?
+- 10,000 spins at 45 spins an hour 9.25 days of continuous play 
+
+roulette(your_number, your_bet, new_game = F)
+returns win or loss, cummulative sum of winnings / losings 
+
+i.e.
+
+roulette(6, 100)
+-> ** 18 ** 
+-> You Lose! 
+-> Total Winnings: -$1500
+
+```{r}
+library('tidyverse')
+```
+
+Creating the data
+```{r}
+roulette_full <- sample(-1:36, 10000, replace=T)
+
+roulette_ten <- roulette_full[1:10]
+roulette_hundred <- roulette_full[1:100]
+roulette_thousand <- roulette_full[1:1000]
+```
+
+
+for num in roulette 
+phabian_money -$10
+tammy_money - $10
+latigo_money - $10
+
+if num in roulette 2, 4, 7, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35
+then phabian_win + 1 && phabian_money + $ 20 
+
+else if num in roulette = 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36 
+then tammy_win + 1 && tammy_money + $30
+
+else if num in roulette = 23 
+then Latigo_win + 1 && latigo_money + $360 
+
+for each roulette spin, keep track of number wins and $ winnings 
+
+I want to plot it all at the end 
+
+
+
+
+
+
