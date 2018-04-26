@@ -43,6 +43,48 @@ roulette_thousand <- roulette_full[1:1000]
 ```
 
 
+
+```{r}
+# Initialize scenario
+gambler_a_cash <- 0 
+gambler_a_wins <- 0 
+
+gambler_b_cash <- 0 
+gambler_b_wins <- 0 
+
+gambler_c_cash <- 0
+gambler_c_wins <- 0 
+
+## Create an empty vector 
+examine <- vector("double", length(roulette_ten))
+
+for (i in seq_along(roulette_ten)) {
+  # Each gambler places a bet
+  gambler_a_cash = gambler_a_cash - 10
+  gambler_b_cash = gambler_b_cash - 10 
+  gambler_c_cash = gambler_c_cash - 10
+  # 
+  if (roulette_ten[[i]] == 1) 
+    gambler_a_cash = gambler_a_cash + 1000
+  #examine[[i]] <- cumsum(roulette_ten[[i]])
+}
+
+gambler_a_cash
+roulette_ten
+examine
+```
+
+for-loop snippet
+```
+output <- vector("double", ncol(df))  # 1. output
+for (i in seq_along(df)) {            # 2. sequence
+  output[[i]] <- median(df[[i]])      # 3. body
+}
+output
+
+```
+
+
 for num in roulette 
 phabian_money -$10
 tammy_money - $10
