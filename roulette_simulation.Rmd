@@ -46,6 +46,9 @@ roulette_thousand <- roulette_full[1:1000]
 
 ```{r}
 # Initialize scenario
+
+#make each of these an empty vector like examine vector, then say something along the 
+# lines of if win, then gambler_a_cash[[i]] = gambler_a_cash[[i-1]] + 20
 gambler_a_cash <- 0 
 gambler_a_wins <- 0 
 
@@ -55,24 +58,87 @@ gambler_b_wins <- 0
 gambler_c_cash <- 0
 gambler_c_wins <- 0 
 
-## Create an empty vector 
-examine <- vector("double", length(roulette_ten))
 
-for (i in seq_along(roulette_ten)) {
-  # Each gambler places a bet
-  gambler_a_cash = gambler_a_cash - 10
-  gambler_b_cash = gambler_b_cash - 10 
-  gambler_c_cash = gambler_c_cash - 10
-  # 
-  if (roulette_ten[[i]] == 1) 
-    gambler_a_cash = gambler_a_cash + 1000
-  #examine[[i]] <- cumsum(roulette_ten[[i]])
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+
+# Define Bets
+black <- c(2, 4, 7, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35)
+third_dozen <- c(25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36)
+lucky_23 <- 23
+
+
+# Initialize Variables
+ga_cash <- vector("double", length(roulette_ten))
+ga_total_cash <- 0 
+ga_wins <- vector("double", length(roulette_ten))
+ga_total_wins <- 0 
+
+gb_cash <- vector("double", length(roulette_ten))
+gb_total_cash <- 0 
+gb_wins <- vector("double", length(roulette_ten))
+gb_total_wins <- 0 
+
+gc_cash <- vector("double", length(roulette_ten))
+gc_total_cash <- 0 
+gc_wins <- vector("double", length(roulette_ten))
+gc_total_wins <- 0 
+
+for (i in seq_along(roulette_full)) {
+  # All Gamblers Bet
+  ga_total_cash = ga_total_cash - 10
+  gb_total_cash = gb_total_cash - 10
+  gc_total_cash = gc_total_cash - 10
+  # Gambler A Wins
+  if (roulette_full[[i]] %in% black) {
+    ga_total_cash = ga_total_cash + 20 
+    ga_total_wins = ga_total_wins + 1 
+  }
+  # Gambler B Wins
+  if (roulette_full[[i]] %in% third_dozen) {
+    gb_total_cash = gb_total_cash + 30 
+    gb_total_wins = gb_total_wins + 1
+  }
+  # Gambler C Wins
+  if (roulette_full[[i]] == lucky_23) {
+    gc_total_cash = gc_total_cash + 360
+    gc_total_wins = gc_total_wins + 1
+  }
+  # End of Round
+  ga_cash[[i]] <- ga_total_cash
+  ga_wins[[i]] <- ga_total_wins
+  gb_cash[[i]] <- gb_total_cash
+  gb_wins[[i]] <- gb_total_wins
+  gc_cash[[i]] <- gc_total_cash
+  gc_wins[[i]] <- gc_total_wins
 }
 
-gambler_a_cash
-roulette_ten
-examine
 ```
+  
+    gambler_a_cash[[i]] = gambler_a_cash
+    gambler_a_wins[[i]] = gambler_a_wins[[i-1]] + 1
+  }
+
+if num in roulette 2, 4, 7, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35
+then phabian_win + 1 && phabian_money + $ 20 
+
 
 for-loop snippet
 ```
