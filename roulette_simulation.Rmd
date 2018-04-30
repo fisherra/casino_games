@@ -29,11 +29,12 @@ roulette(6, 100)
 -> You Lose! 
 -> Total Winnings: -$1500
 
-```{r}
+# Load the library
+```{r, message=F}
 library('tidyverse')
 ```
 
-Creating the data
+Creating the Roulette Data
 ```{r}
 roulette_full <- sample(-1:36, 10000, replace=T)
 
@@ -42,41 +43,7 @@ roulette_hundred <- roulette_full[1:100]
 roulette_thousand <- roulette_full[1:1000]
 ```
 
-
-
-```{r}
-# Initialize scenario
-
-#make each of these an empty vector like examine vector, then say something along the 
-# lines of if win, then gambler_a_cash[[i]] = gambler_a_cash[[i-1]] + 20
-gambler_a_cash <- 0 
-gambler_a_wins <- 0 
-
-gambler_b_cash <- 0 
-gambler_b_wins <- 0 
-
-gambler_c_cash <- 0
-gambler_c_wins <- 0 
-
-
-
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Create the Simulation
 ```{r}
 
 # Define Bets
@@ -84,18 +51,18 @@ black <- c(2, 4, 7, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35)
 third_dozen <- c(25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36)
 lucky_23 <- 23
 
-
 # Initialize Variables
+# Gambler A
 ga_cash <- vector("double", length(roulette_ten))
 ga_total_cash <- 0 
 ga_wins <- vector("double", length(roulette_ten))
 ga_total_wins <- 0 
-
+# Gambler B
 gb_cash <- vector("double", length(roulette_ten))
 gb_total_cash <- 0 
 gb_wins <- vector("double", length(roulette_ten))
 gb_total_wins <- 0 
-
+# Gambler C
 gc_cash <- vector("double", length(roulette_ten))
 gc_total_cash <- 0 
 gc_wins <- vector("double", length(roulette_ten))
@@ -106,22 +73,22 @@ for (i in seq_along(roulette_full)) {
   ga_total_cash = ga_total_cash - 10
   gb_total_cash = gb_total_cash - 10
   gc_total_cash = gc_total_cash - 10
-  # Gambler A Wins
+  # If Gambler A Wins
   if (roulette_full[[i]] %in% black) {
     ga_total_cash = ga_total_cash + 20 
     ga_total_wins = ga_total_wins + 1 
   }
-  # Gambler B Wins
+  # If Gambler B Wins
   if (roulette_full[[i]] %in% third_dozen) {
     gb_total_cash = gb_total_cash + 30 
     gb_total_wins = gb_total_wins + 1
   }
-  # Gambler C Wins
+  # If Gambler C Wins
   if (roulette_full[[i]] == lucky_23) {
     gc_total_cash = gc_total_cash + 360
     gc_total_wins = gc_total_wins + 1
   }
-  # End of Round
+  # End of Round - Save Totals 
   ga_cash[[i]] <- ga_total_cash
   ga_wins[[i]] <- ga_total_wins
   gb_cash[[i]] <- gb_total_cash
@@ -132,45 +99,119 @@ for (i in seq_along(roulette_full)) {
 
 ```
   
-    gambler_a_cash[[i]] = gambler_a_cash
-    gambler_a_wins[[i]] = gambler_a_wins[[i-1]] + 1
-  }
-
-if num in roulette 2, 4, 7, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35
-then phabian_win + 1 && phabian_money + $ 20 
+Analysis to do - - - 
 
 
-for-loop snippet
-```
-output <- vector("double", ncol(df))  # 1. output
-for (i in seq_along(df)) {            # 2. sequence
-  output[[i]] <- median(df[[i]])      # 3. body
-}
-output
-
+make sure theres no trend in our roulette data
+```{r}
+plot(roulette_full)
 ```
 
 
-for num in roulette 
-phabian_money -$10
-tammy_money - $10
-latigo_money - $10
 
-if num in roulette 2, 4, 7, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35
-then phabian_win + 1 && phabian_money + $ 20 
+Combine data into a tibble 
 
-else if num in roulette = 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36 
-then tammy_win + 1 && tammy_money + $30
+```{r}
+ga <- "Gambler A"
+gb <- "Gambler B"
+gc <- "Gambler C"
 
-else if num in roulette = 23 
-then Latigo_win + 1 && latigo_money + $360 
-
-for each roulette spin, keep track of number wins and $ winnings 
-
-I want to plot it all at the end 
+results <- tibble(spin_num = 1:10000,ga, ga_cash, ga_wins, gb, gb_cash, gb_wins, gc, gc_cash, gc_wins)
+results_100 <- head(results, n=100)
+results_1000 <- head(results, n=1000)
+```
 
 
+```{r}
+ggplot(results_100) + 
+  geom_point(aes(x = spin_num, y = ga_wins, color = ga), alpha = 0.8) + 
+  geom_point(aes(x = spin_num, y = gb_wins, color = gb), alpha = 0.8) + 
+  geom_point(aes(x = spin_num, y  = gc_wins, color = gc), alpha = 0.8) + 
+  theme_minimal() +
+  theme(legend.title=element_blank()) + 
+  scale_colour_manual(values = c("black", "#E0080B", "#016D29")) + 
+    labs(title = "100 Spin Results - Wins", 
+       y = "Number of Wins",
+       x = "Number of Spins"
+       )
+```
 
 
 
+```{r}
+ggplot(results_100) + 
+  geom_point(aes(x = spin_num, y = ga_cash, color = ga), alpha = 0.8) + 
+  geom_point(aes(x = spin_num, y = gb_cash, color = gb), alpha = 0.8) + 
+  geom_point(aes(x = spin_num, y = gc_cash, color = gc), alpha = 0.8) + 
+  theme_minimal() +
+  theme(legend.title=element_blank()) + 
+  scale_colour_manual(values = c("black", "#E0080B", "#016D29")) + 
+    labs(title = "100 Spin Results - Earnings", 
+       y = "Earnings",
+       x = "Number of Spins"
+       )
+```
+
+
+
+```{r}
+ggplot(results_1000) + 
+  geom_point(aes(x = spin_num, y = ga_cash, color = ga), alpha = 0.8) + 
+  geom_point(aes(x = spin_num, y = gb_cash, color = gb), alpha = 0.8) + 
+  geom_point(aes(x = spin_num, y  = gc_cash, color = gc), alpha = 0.8) + 
+  theme_minimal() +
+  theme(legend.title=element_blank()) + 
+  scale_colour_manual(values = c("black", "#E0080B", "#016D29")) + 
+    labs(title = "1000 Spin Results - Earnings", 
+       y = "Earnings",
+       x = "Number of Spins"
+       )
+```
+
+
+```{r}
+ggplot(results) + 
+  geom_point(aes(x = spin_num, y = ga_wins, color = ga), alpha = 0.8) + 
+  geom_point(aes(x = spin_num, y = gb_wins, color = gb), alpha = 0.8) + 
+  geom_point(aes(x = spin_num, y  = gc_wins, color = gc), alpha = 0.8) + 
+  theme_minimal() +
+  theme(legend.title=element_blank()) + 
+  scale_colour_manual(values = c("black", "#E0080B", "#016D29")) + 
+    labs(title = "10,000 Spin Results - Wins", 
+       y = "Number of Wins",
+       x = "Number of Spins"
+       )
+```
+
+
+
+```{r}
+ggplot(results) + 
+  geom_point(aes(x = spin_num, y = ga_cash, color = ga), alpha = 0.8) + 
+  geom_point(aes(x = spin_num, y = gb_cash, color = gb), alpha = 0.8) + 
+  geom_point(aes(x = spin_num, y  = gc_cash, color = gc), alpha = 0.8) + 
+  theme_minimal() +
+  theme(legend.title=element_blank()) + 
+  scale_colour_manual(values = c("black", "#E0080B", "#016D29")) + 
+    labs(title = "10,000 Spin Results - Earnings", 
+       y = "Earnings",
+       x = "Number of Spins"
+       )
+```
+
+
+trendline for 10,000, average lose per spin for each gambler, max / min, box plot for dry streak each player 
+
+Simple plot and summary comparing gambler a, b, c for wins and earnings (10 spins)
+
+Simple plot comparing gambler a, b, c for wins and earnings (100 spins)
+Simple plot comparing gambler a, b, c for wins and earnings (1000 spins)
+
+Plot and long summary comparing gambler a b c for wins and earnings (10000 spins)
+summarize 10,000 spins
+- trendline for 10,000 wins / earnings
+- summary statistics for max / min, who won / lost the most
+- box plot for average dry streak, shortest dry streak, longest dry streak 
+
+look at a specific gambler and how the trend line changes when you change from 10 / 100 / 1000 / 10000 spins
 
