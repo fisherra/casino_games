@@ -35,12 +35,8 @@ library('tidyverse')
 ```
 
 Creating the Roulette Data
-```{r}
-roulette_full <- sample(-1:36, 10000, replace=T)
-
-roulette_ten <- roulette_full[1:10]
-roulette_hundred <- roulette_full[1:100]
-roulette_thousand <- roulette_full[1:1000]
+```{r, cache=T}
+roulette <- sample(-1:36, 10000, replace=T)
 ```
 
 Create the Simulation
@@ -53,38 +49,38 @@ lucky_23 <- 23
 
 # Initialize Variables
 # Gambler A
-ga_cash <- vector("double", length(roulette_ten))
+ga_cash <- vector("double", length(roulette))
 ga_total_cash <- 0 
-ga_wins <- vector("double", length(roulette_ten))
+ga_wins <- vector("double", length(roulette))
 ga_total_wins <- 0 
 # Gambler B
-gb_cash <- vector("double", length(roulette_ten))
+gb_cash <- vector("double", length(roulette))
 gb_total_cash <- 0 
-gb_wins <- vector("double", length(roulette_ten))
+gb_wins <- vector("double", length(roulette))
 gb_total_wins <- 0 
 # Gambler C
-gc_cash <- vector("double", length(roulette_ten))
+gc_cash <- vector("double", length(roulette))
 gc_total_cash <- 0 
-gc_wins <- vector("double", length(roulette_ten))
+gc_wins <- vector("double", length(roulette))
 gc_total_wins <- 0 
 
-for (i in seq_along(roulette_full)) {
+for (i in seq_along(roulette)) {
   # All Gamblers Bet
   ga_total_cash = ga_total_cash - 10
   gb_total_cash = gb_total_cash - 10
   gc_total_cash = gc_total_cash - 10
   # If Gambler A Wins
-  if (roulette_full[[i]] %in% black) {
+  if (roulette[[i]] %in% black) {
     ga_total_cash = ga_total_cash + 20 
     ga_total_wins = ga_total_wins + 1 
   }
   # If Gambler B Wins
-  if (roulette_full[[i]] %in% third_dozen) {
+  if (roulette[[i]] %in% third_dozen) {
     gb_total_cash = gb_total_cash + 30 
     gb_total_wins = gb_total_wins + 1
   }
   # If Gambler C Wins
-  if (roulette_full[[i]] == lucky_23) {
+  if (roulette[[i]] == lucky_23) {
     gc_total_cash = gc_total_cash + 360
     gc_total_wins = gc_total_wins + 1
   }
@@ -104,10 +100,8 @@ Analysis to do - - -
 
 make sure theres no trend in our roulette data
 ```{r}
-plot(roulette_full)
+plot(roulette)
 ```
-
-
 
 Combine data into a tibble 
 
@@ -116,7 +110,7 @@ ga <- "Gambler A"
 gb <- "Gambler B"
 gc <- "Gambler C"
 
-results <- tibble(spin_num = 1:10000,ga, ga_cash, ga_wins, gb, gb_cash, gb_wins, gc, gc_cash, gc_wins)
+results <- tibble(spin_num = 1:10000, ga, ga_cash, ga_wins, gb, gb_cash, gb_wins, gc, gc_cash, gc_wins)
 results_100 <- head(results, n=100)
 results_1000 <- head(results, n=1000)
 ```
@@ -147,7 +141,7 @@ ggplot(results_100) +
   theme(legend.title=element_blank()) + 
   scale_colour_manual(values = c("black", "#E0080B", "#016D29")) + 
     labs(title = "100 Spin Results - Earnings", 
-       y = "Earnings",
+       y = "Earnings ($)",
        x = "Number of Spins"
        )
 ```
@@ -163,7 +157,7 @@ ggplot(results_1000) +
   theme(legend.title=element_blank()) + 
   scale_colour_manual(values = c("black", "#E0080B", "#016D29")) + 
     labs(title = "1000 Spin Results - Earnings", 
-       y = "Earnings",
+       y = "Earnings ($)",
        x = "Number of Spins"
        )
 ```
@@ -194,7 +188,7 @@ ggplot(results) +
   theme(legend.title=element_blank()) + 
   scale_colour_manual(values = c("black", "#E0080B", "#016D29")) + 
     labs(title = "10,000 Spin Results - Earnings", 
-       y = "Earnings",
+       y = "Earnings ($)",
        x = "Number of Spins"
        )
 ```
@@ -202,16 +196,55 @@ ggplot(results) +
 
 trendline for 10,000, average lose per spin for each gambler, max / min, box plot for dry streak each player 
 
-Simple plot and summary comparing gambler a, b, c for wins and earnings (10 spins)
+```{r}
+ga_total_wins / 10000 * 100
+gb_total_wins / 10000 * 100
+gc_total_wins / 10000 * 100
+```
 
-Simple plot comparing gambler a, b, c for wins and earnings (100 spins)
-Simple plot comparing gambler a, b, c for wins and earnings (1000 spins)
+actual probability of each win - 
+half bet = 46.37%
+thirds bet = 31.58%
+single number bet = 2.63%
 
-Plot and long summary comparing gambler a b c for wins and earnings (10000 spins)
-summarize 10,000 spins
-- trendline for 10,000 wins / earnings
-- summary statistics for max / min, who won / lost the most
-- box plot for average dry streak, shortest dry streak, longest dry streak 
+Average loss - 
+```{r}
+ga_total_cash / 10000
+gb_total_cash / 10000
+gc_total_cash / 10000
+```
+```{r}
+min(ga_cash)
+min(gb_cash)
+min(gc_cash)
 
+```
+
+box plot for average dry streak, shortest dry streak, longest dry streak 
+```{r}
+lead_ga_wins <- lead(ga_wins)
+ga_wins_yn <- vector("double", length(ga_wins))
+
+for (i in seq_along(ga_wins)) {
+  ga_wins_yn[[i]] = lead_ga_wins[[i]] - ga_wins[[i]]
+}
+
+#pseudo code for dry count save 
+dry_count <- 0 
+
+if ga_wins_wn[[i]] == 0 
+  dry_count = dry_count + 1 
+else if ga_wins_yn[[i]] == 1 
+  dry_count_save[[i]] = dry_count[[i]]
+  dry_count = 0 
+  
+max(dry_count_save)
+min(dry_count_save)
+mean(dry_count_save)
+
+ga_wins_yn
+```
 look at a specific gambler and how the trend line changes when you change from 10 / 100 / 1000 / 10000 spins
+
+create a roulette function
 
