@@ -229,20 +229,30 @@ for (i in seq_along(ga_wins)) {
   ga_wins_yn[[i]] = lead_ga_wins[[i]] - ga_wins[[i]]
 }
 
-#pseudo code for dry count save 
 dry_count <- 0 
+dry_count_save <- vector("double", length(short_yn))
 
-if ga_wins_wn[[i]] == 0 
-  dry_count = dry_count + 1 
-else if ga_wins_yn[[i]] == 1 
-  dry_count_save[[i]] = dry_count[[i]]
-  dry_count = 0 
+short_yn <- head(ga_wins_yn, n = 9999)
+
+for (i in seq_along(short_yn)) {
+  if (short_yn[[i]] == FALSE) {
+    dry_count = dry_count + 1
+  }
+  if (short_yn[[i]] == TRUE) {
+    dry_count_save[[i]] = dry_count
+    dry_count = 0
+  } 
+}
+
+dry_count_save
+
+dry_tibble <- tibble("index" = 1:10000, "count" = dry_count_save)
+
+ggplot(dry_tibble) + 
+  geom_bar(aes(count))
   
-max(dry_count_save)
-min(dry_count_save)
-mean(dry_count_save)
 
-ga_wins_yn
+
 ```
 look at a specific gambler and how the trend line changes when you change from 10 / 100 / 1000 / 10000 spins
 
