@@ -220,41 +220,96 @@ min(gc_cash)
 
 ```
 
-box plot for average dry streak, shortest dry streak, longest dry streak 
 ```{r}
-lead_ga_wins <- lead(ga_wins)
-ga_wins_yn <- vector("double", length(ga_wins))
+ga_wins_lead <- lead(ga_wins)
+gb_wins_lead <- lead(gb_wins)
+gc_wins_lead <- lead(gc_wins) 
 
-for (i in seq_along(ga_wins)) {
-  ga_wins_yn[[i]] = lead_ga_wins[[i]] - ga_wins[[i]]
-}
+ga_wins_binary <- ga_wins_lead - ga_wins
+ga_wins_binary[10000] = 0
+gb_wins_binary <- gb_wins_lead - gb_wins
+gb_wins_binary[10000] = 0 
+gc_wins_binary <- gc_wins_lead - gc_wins
+gc_wins_binary[10000] = 0
 
-dry_count <- 0 
-dry_count_save <- vector("double", length(short_yn))
+dry_count_a <- 0 
+dry_count_save_a  <- vector("double", length(ga_wins_binary))
+dry_count_b <- 0
+dry_count_save_b  <- vector("double", length(gb_wins_binary))
+dry_count_c <- 0
+dry_count_save_c  <- vector("double", length(gc_wins_binary))
 
-short_yn <- head(ga_wins_yn, n = 9999)
 
-for (i in seq_along(short_yn)) {
-  if (short_yn[[i]] == FALSE) {
-    dry_count = dry_count + 1
+for (i in seq_along(ga_wins_binary)) {
+  if (ga_wins_binary[[i]] == FALSE) {
+    dry_count_a = dry_count_a + 1
   }
-  if (short_yn[[i]] == TRUE) {
-    dry_count_save[[i]] = dry_count
-    dry_count = 0
+  if (ga_wins_binary[[i]] == TRUE) {
+    dry_count_save_a[[i]] = dry_count_a
+    dry_count_a = 0
   } 
 }
 
-dry_count_save
+dry_count_save_a
+dry_tibble_a <- tibble("dry_streak" = dry_count_save_a)
 
-dry_tibble <- tibble("index" = 1:10000, "count" = dry_count_save)
-
-ggplot(dry_tibble) + 
-  geom_bar(aes(count))
+ggplot(dry_tibble_a) + 
+  geom_bar(aes(dry_streak))
   
+for (i in seq_along(gb_wins_binary)) {
+  if (gb_wins_binary[[i]] == FALSE) {
+    dry_count_b = dry_count_b + 1
+  }
+  if (gb_wins_binary[[i]] == TRUE) {
+    dry_count_save_b[[i]] = dry_count_b
+    dry_count_b = 0
+  } 
+}
 
+dry_count_save_b
+dry_tibble_b <- tibble("dry_streak" = dry_count_save_b)
+
+ggplot(dry_tibble_b) + 
+  geom_bar(aes(dry_streak))
+
+for (i in seq_along(gc_wins_binary)) {
+  if (gc_wins_binary[[i]] == FALSE) {
+    dry_count_c = dry_count_c + 1
+  }
+  if (gc_wins_binary[[i]] == TRUE) {
+    dry_count_save_c[[i]] = dry_count_c
+    dry_count_c = 0
+  } 
+}
+
+dry_count_save_c
+dry_tibble_c <- tibble("dry_streak" = dry_count_save_c)
+
+ggplot(dry_tibble_c) + 
+  geom_bar(aes(dry_streak))
 
 ```
-look at a specific gambler and how the trend line changes when you change from 10 / 100 / 1000 / 10000 spins
 
 create a roulette function
 
+```{r}
+mini_roulette <- function(bet, num) {
+
+  print(str_c("You've bet $", bet, " on ", num))
+  result = sample(0:12,1)
+  print(str_c("The ball has landed on ", result))
+  
+  if ( num == result ) {
+    print(str_c("You've Won $", bet * 36, "!"))
+    total_winnings = total_winnings + bet * 36
+  } else {
+    print ("You Lose!")
+    total_winnings = total_winnings - bet
+  }
+  print(str_c("Your total winnings are ", total_winnings, " dollars"))
+}
+
+mini_roulette(100, 0)
+mini_roulette(100, 1)
+mini_roulette(100, 2)
+```
