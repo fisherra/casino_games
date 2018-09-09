@@ -1,0 +1,38 @@
+---
+title: "Statistics Using R - Probability"
+author: "Fisher Ankney"
+date: "9/9/2018"
+output: html_document
+---
+
+### Chapter 3
+
+```{r}
+library('tidyverse')
+```
+
+
+#### Probability Distributions
+
+
+Single die, showing the effect of sample size on the relative frequency
+```{r}
+single_die_1 <- sample(1:6, 100, replace=T)
+sd_1_tab <- table(single_die_1)
+sd_1_freq <- data_frame(num = 1:6, roll = sd_1_tab/100)
+
+ggplot(sd_1_freq) + 
+  geom_bar(aes(num,roll), stat="identity") + 
+  geom_hline(yintercept = (1/6), col = "red", size=1) + 
+  theme_minimal()
+
+single_die_2 <- sample(1:6, 100000, replace=T)
+sd_2_tab <- table(single_die_2)
+sd_2_freq <- data_frame(num = 1:6, roll = sd_2_tab/100000)
+
+ggplot(sd_2_freq) + 
+  geom_bar(aes(num,roll), stat="identity") +
+  geom_hline(yintercept = (1/6), col = "red", size=1) + 
+  theme_minimal()
+```
+
