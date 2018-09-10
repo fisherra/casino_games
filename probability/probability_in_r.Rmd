@@ -36,3 +36,82 @@ ggplot(sd_2_freq) +
   theme_minimal()
 ```
 
+<br>
+
+
+
+
+No no no, you can't just repeat the same thing, you'll have to use a loop
+```{r}
+# create empty dataframe of 100 values
+roll_vector <- vector("double", 10000)
+
+
+for (i in seq_along(roll_vector)) {
+  roll_vector[i] = sum(sample(1:6,1), sample(1:6,1))
+}
+
+roll_vector
+
+table(roll_vector)
+
+roll_df <- as_data_frame(table(roll_vector)/10000)
+colnames(roll_df) <- c("roll", "freq")
+roll_df$roll <- as.numeric(roll_df$roll)
+
+ggplot(roll_df) + 
+  geom_bar(aes(roll, freq), stat="identity") +
+  theme_minimal()
+```
+
+
+make a function that rolls n number of dice and plots the results
+```{r}
+# function(n_dice, n_rolls) {
+
+#roll_freq <- function(n_dice, n_rolls) {
+
+n_roll <- 100
+n_dice <- 10 
+
+roll_vector <- vector("double", n_roll)
+roll_vector
+
+dice_vector <- vector("double", n_dice)
+dice_vector
+
+for (i in seq_along(dice_vector)) {
+  dice_vector[i] = sample(1:6,1)
+}
+
+roll_vector[1] <- sum(dice_vector)
+roll_vector
+# for (i in seq_along(roll_vector)) {
+#   roll_vector[i] = sum(dice_vector[i])
+# }
+
+
+
+
+# create empty vector of n_rolls elements
+
+# create dice vector 
+# for n_dice sample(1:6,1) -> element
+# sum dice vector
+# put that sum into roll vector
+
+# table roll vector
+
+
+# roll_df <- as_data_frame(table(roll_vector)/n_rolls)
+
+# colnames(roll_df) <- c("roll", "freq")
+# roll_df\$roll <- as.numeric(roll_df$roll)
+
+# ggplot(roll_df) + 
+#  geom_bar(aes(roll, freq), stat="identity") +
+#  theme_minimal()
+#}
+```
+
+  
