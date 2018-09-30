@@ -1,0 +1,119 @@
+---
+title: "hands_on_r_2"
+author: "Fisher Ankney"
+date: "9/29/2018"
+output: html_document
+---
+
+# chapter 9 - loops 
+
+loops are R's method for repeating tasks. 
+which makes them great for simulations. 
+
+Expected Values - 
+E(x) = sum(x * f(x))
+
+```{r}
+wheel <- c("DD", "7", "BBB", "BB", "B", "C", "0")
+
+combos <- expand.grid(wheel, wheel, wheel, stringsAsFactors = F)
+
+combos <- as_tibble(combos)
+
+combos
+```
+
+get probability of each outcome
+```{r}
+prob <- c("DD" = 0.03, "7" = 0.03, "BBB" = 0.06, "BB" = 0.1, "B" = 0.25, "C" = 0.01, "0" = 0.52)
+
+prob
+```
+
+```{r}
+combos$prob1 <- prob[combos$Var1]
+combos$prob2 <- prob[combos$Var2]
+combos$prob3 <- prob[combos$Var3]
+
+combos
+```
+
+total probabilities 
+```{r}
+combos$prob_total <- combos$prob1 * combos$prob2 * combos$prob3
+
+combos
+```
+
+sums to 1?
+```{r}
+sum(combos$prob_total)
+```
+
+and now calculate the payouts for each combination to find expected value 
+```{r}
+score <- function(symbols) {
+  
+  # check if all symbols are the same
+  same <- length(unique(symbols)) == 1
+  # check if all symbols are variety of bar
+  bars <- all(symbols %in% c('B', 'BB', 'BBB'))
+  
+  # if all symbols are the same
+  if (same) {
+  # assign payout value in 'lookup table'
+    payouts <- c('DD' = 100, '7' = 80, 'BBB' = 40, 'BB' = 25, 'B' = 10, 'C' = 10, '0' = 0)
+    prize <- payouts[[symbols[1]]] 
+  # if all symbols are bars
+  } else if (all(bars)) {
+  # prize is $5
+    prize <- 5
+  # else check for cherries
+  } else {
+  # count cherries
+    cherries <- sum(symbols == "C")
+  # assign prize based on cherry
+    prize <- c(0,2,5)[cherries + 1]
+  }
+  
+  # now check if any diamonds are present
+  diamonds <- sum(symbols == "DD")
+  # adjust prize as necissary 
+  prize <- prize * (2 ^ diamonds)
+
+}
+
+
+```
+
+
+```{r}
+symbols <- c(combos[[1,1]], combos[[1,2]], combos[[1,3]])
+
+symbols[[1]]
+print(score(symbols))
+```
+
+
+however there are 343 rows, we need a for loop 
+
+empty vector
+```{r}
+combos$prize <- NA
+
+combos
+```
+
+for loop time 
+```{r}
+for (i in 1:nrow(combos)) {
+
+symbols <- c(combos[[i,1]], combos[[i,2]], combos[[i,3]])
+
+combos$prize[i] <- score(symbols)
+
+}
+
+combos
+
+```

@@ -1,0 +1,485 @@
+---
+title: "hands_on_r_2"
+author: "Fisher Ankney"
+date: "9/29/2018"
+output: html_document
+---
+
+Chapter 7 - Programs
+
+randomly generate some symbols!
+
+diamonds - DD 
+seven - 7 
+Bar Bar Bar - BBB
+Bar Bar - BB 
+Bar - B
+Cherry - C
+Zero - 0 
+
+```{r}
+get_symbols <- function() {
+  wheel <- c('DD', '7', 'BBB', 'BB', 'B', 'C', '0')
+  symbols <- sample(
+         wheel,
+         size = 3,
+         replace = T,
+         prob = c(0.03, 0.03, 0.06, 0.1, 0.25, 0.01, 0.52)
+        )
+  print(symbols)
+}
+
+```
+
+Test it 
+```{r}
+get_symbols()
+```
+
+
+we're going to create a function to score each roll based on a set of rules
+
+two types of sutasks, parallel and sequencial 
+
+sequential steps - 
+# step 1 
+do this
+# step 2 
+do that
+# step 3 
+print conclusions
+
+parallel cases - 
+# evaluate conditions
+# if way 1 
+do way 1 
+# if way 2 
+do way 2
+# if way 3 
+do way 3
+# print results
+print
+
+The slot machine program will look something like this - 
+
+slot_machine() - 
+get symbols
+display symbols
+
+three branches - 
+- 3 of a kind, score type 1 
+- all bars, score type 2 
+- other method, score type 3
+- and so on
+
+adjust for diamonds (multiplier)
+
+print score 
+
+## If statements 
+```
+if (this) {
+  that
+}
+```
+
+fun little function 
+```{r}
+a <- 3.14
+trunc(a)
+a - trunc(a)
+```
+
+
+
+
+test whether the scores are three of a kind
+```{r}
+symbols <- c("7", "7", "7")
+
+if (symbols[[1]] == symbols[[2]] & symbols[[2]] == symbols[[3]]) {
+  print("true")
+}
+
+# another way to do it 
+if (length(unique(symbols)) == 1) {
+  print('its true')
+}
+```
+
+
+now add this test to the slot machine script 
+
+```{r, eval = F}
+same <- length(unique(symbols)) == 1 
+
+if (same) {
+  prize <- # look up prize $ 
+} else if ( # case 2: all bars ) {
+  prize <- # $5
+} else {
+  # count cherries
+  prize <- # calculate a prize
+}
+ # calculate diamonds, use as multiplier 
+```
+
+
+
+now we test if all bars 
+```{r}
+symbols <- c('B', 'BB', 'BBB')
+
+
+all(symbols %in% c('B', 'BB', 'BBB'))
+```
+
+great, insert this into the program 
+```{r, eval=F, error=T}
+same <- length(unique(symbols)) == 1 
+bars <- all(symbols %in% c('B', 'BB', 'BBB'))
+if (same) {
+  prize <- # look up prize $ 
+} else if (bars) {
+  prize <- # $5
+} else {
+  # count cherries
+  prize <- # calculate a prize
+}
+ # calculate diamonds, use as multiplier 
+```
+
+now to assign prize values 
+
+don't use a long and tedious if then tree, use a lookup table
+```{r}
+payouts <- c('DD' = 100, '7' = 80, 'BBB' = 40, 'BB' = 25, 'B' = 10, 'C' = 10, '0' = 0)
+
+payouts
+
+payouts[['DD']]
+
+payouts[[symbols[1]]]
+```
+
+add it to the slot machine game
+```{r, eval=F, error=T}
+same <- length(unique(symbols)) == 1 
+bars <- all(symbols %in% c('B', 'BB', 'BBB'))
+payouts <- c('DD' = 100, '7' = 80, 'BBB' = 40, 'BB' = 25, 'B' = 10, 'C' = 10, '0' = 0)
+
+
+if (same) {
+  prize <- payouts[[symbols[1]]] 
+} else if (bars) {
+  prize <- # $5
+} else {
+  # count cherries
+  prize <- # calculate a prize
+}
+ # calculate diamonds, use as multiplier 
+```
+
+
+now we go tot he next task, assign $5 prize to bars
+```{r, eval=F, error=T}
+same <- length(unique(symbols)) == 1 
+bars <- all(symbols %in% c('B', 'BB', 'BBB'))
+payouts <- c('DD' = 100, '7' = 80, 'BBB' = 40, 'BB' = 25, 'B' = 10, 'C' = 10, '0' = 0)
+
+
+if (same) {
+  prize <- payouts[[symbols[1]]] 
+} else if (bars) {
+  prize <- 5
+} else {
+  # count cherries
+  prize <- # calculate a prize
+}
+ # calculate diamonds, use as multiplier 
+```
+
+
+count cherries and diamonds
+```{r}
+symbols <- c("C", "0", "C")
+
+sum(symbols == "C")
+
+symbols <- c("D", "0", "0")
+
+sum(symbols == "D")
+```
+
+Add these to the program
+```{r, eval = F, error=T}
+same <- length(unique(symbols)) == 1 
+bars <- all(symbols %in% c('B', 'BB', 'BBB'))
+payouts <- c('DD' = 100, '7' = 80, 'BBB' = 40, 'BB' = 25, 'B' = 10, 'C' = 10, '0' = 0)
+
+
+if (same) {
+  prize <- payouts[[symbols[1]]] 
+} else if (bars) {
+  prize <- 5
+} else {
+  cherries <- sum(symbols == "C")
+  prize <- # calculate a prize
+}
+  diamonds <- sum(symbols == "D")
+  prize <- # calculate prize
+```
+
+
+now calculate cherries prize 
+```{r, eval = F}
+symbols <- c("C", "C", "0")
+
+# create a lookup table
+prize <- c(0,2,5)[cherries + 1]
+
+# must +1 to index properly, because zero cherries is first index
+```
+
+Put into program 
+```{r}
+same <- length(unique(symbols)) == 1 
+bars <- all(symbols %in% c('B', 'BB', 'BBB'))
+payouts <- c('DD' = 100, '7' = 80, 'BBB' = 40, 'BB' = 25, 'B' = 10, 'C' = 10, '0' = 0)
+
+
+if (same) {
+  prize <- payouts[[symbols[1]]] 
+} else if (bars) {
+  prize <- 5
+} else {
+  cherries <- sum(symbols == "C")
+  prize <- c(0,2,5)[cherries + 1]
+}
+  diamonds <- sum(symbols == "D")
+  prize <- # calculate prize
+```
+
+diamond multiplier 
+```{r}
+prize * 2 ^ diamonds
+```
+
+insert code and comment 
+```{r}
+# check if all symbols are the same
+same <- length(unique(symbols)) == 1
+# check if all symbols are variety of bar
+bars <- all(symbols %in% c('B', 'BB', 'BBB'))
+
+# if all symbols are the same
+if (same) {
+# assign payout value in 'lookup table'
+  payouts <- c('DD' = 100, '7' = 80, 'BBB' = 40, 'BB' = 25, 'B' = 10, 'C' = 10, '0' = 0)
+  prize <- payouts[[symbols[1]]] 
+# if all symbols are bars
+} else if (bars) {
+# prize is $5
+  prize <- 5
+# else check for cherries
+} else {
+# count cherries
+  cherries <- sum(symbols == "C")
+# assign prize based on cherry
+  prize <- c(0,2,5)[cherries + 1]
+}
+# now check if any diamonds are present
+diamonds <- sum(symbols == "D")
+# adjust prize as necissary 
+prize <- prize * 2 ^ diamonds
+```
+
+package it into a function
+
+
+
+
+
+```{r}
+get_symbols <- function() {
+  wheel <- c('DD', '7', 'BBB', 'BB', 'B', 'C', '0')
+  sample(
+         wheel,
+         size = 3,
+         replace = T,
+         prob = c(0.03, 0.03, 0.06, 0.1, 0.25, 0.01, 0.52)
+        )
+}
+
+```
+
+
+
+
+```{r}
+score <- function(symbols) {
+  
+  # check if all symbols are the same
+  same <- length(unique(symbols)) == 1
+  # check if all symbols are variety of bar
+  bars <- all(symbols %in% c('B', 'BB', 'BBB'))
+  
+  # if all symbols are the same
+  if (same) {
+  # assign payout value in 'lookup table'
+    payouts <- c('DD' = 100, '7' = 80, 'BBB' = 40, 'BB' = 25, 'B' = 10, 'C' = 10, '0' = 0)
+    prize <- payouts[[symbols[1]]] 
+  # if all symbols are bars
+  } else if (all(bars)) {
+  # prize is $5
+    prize <- 5
+  # else check for cherries
+  } else {
+  # count cherries
+    cherries <- sum(symbols == "C")
+  # assign prize based on cherry
+    prize <- c(0,2,5)[cherries + 1]
+  }
+  
+  # now check if any diamonds are present
+  diamonds <- sum(symbols == "D")
+  # adjust prize as necissary 
+  prize <- prize * 2 ^ diamonds
+
+}
+```
+
+now put them together
+```{r}
+play <- function() {
+  symbols <- get_symbols()
+  print(symbols)
+  score(symbols)
+  
+}
+```
+
+now test
+```{r}
+play()
+```
+
+## The S3 System
+
+s3 refers to a class system built into R. governs how R handels objects of different classes. 
+
+built around three components - attributes, generic functions, and methods 
+
+### attributes 
+attributes are peices of extra information that are given a name and appended to an object. 
+
+dont affect the value, but stick to it as metadata
+```{r}
+attributes()
+```
+
+add attributes with function attr
+```{r}
+# create var one_play
+one_play <- play() 
+
+# show var one_play
+one_play
+
+# show attributes of var one_play
+attributes(one_play)
+
+# add symbols attribute to one_play
+attr(one_play, "symbols") <- c("B","0","B")
+
+# show attributes one_play
+attributes(one_play)
+```
+
+
+Modify play to return a prize that contains the symbols associated with it as an attribute named symbols. remove the redundant call to print(symbols)
+```{r}
+play <- function() {
+  symbols <- get_symbols()
+  prize <- score(symbols)
+  attr(prize, 'symbols') <- symbols
+  prize
+}
+```
+
+lets see if it works 
+```{r}
+play()
+```
+
+ugly, but we can fix that 
+```{r}
+two_play <- play()
+two_play
+```
+
+```{r}
+slot_display <- function(prize){
+  
+# extra symbol 
+symbols <- attr(prize, "symbols")
+
+# collapse symbols into single string 
+symbols <- paste(symbols, collapse = " ")
+
+# combine symbols with prize as a regex
+string <- paste(symbols, prize, sep = '\n$')
+
+#display regex in consol without quotes
+cat(string)
+
+}
+```
+
+test it
+```{r}
+slot_display(play())
+```
+
+this method of cleaning the output requires you to manually intervene in your R session. There is a function to automatically clean it up, and that's print(). 
+
+## generic functions
+
+```{r}
+class(one_play) <- "slots"
+
+print.slots <- function(x, ...) {
+  cat("I'm using print.slots method")
+}
+
+print(one_play)
+```
+
+excellent, so lets print slots the way we want to print them
+
+```{r}
+print.slots <- function(x, ...) {
+  slot_display(x)
+}
+```
+
+now try it out
+```{r}
+one_play
+```
+
+now to get every single play() to have attribute slot
+```{r}
+play <- function() {
+  symbols <- get_symbols()
+  structure(score(symbols), symbols = symbols, class= 'slots')
+}
+
+class(play())
+```
+
+```{r}
+play()
+```
+
+

@@ -41,7 +41,7 @@ I've created a script to simulate 10,000 roulette spins as a separate file. The 
 library('tidyverse')
 
 roulette <- as_tibble(sample(-1:36, 10000, replace=T))
-write_csv(roulette, "roulette.csv")
+write_csv(roulette, "input/roulette.csv")
 ```
 
 <br> 
@@ -49,7 +49,7 @@ write_csv(roulette, "roulette.csv")
 
 ```{r, message=F}
 # loading roulette.csv
-roulette <- read_csv("roulette.csv")
+roulette <- read_csv("input/roulette.csv")
 roulette <- as.integer(roulette$value)
 ```
 

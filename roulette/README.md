@@ -63,7 +63,7 @@ file and loaded into this study.
 <br> <br>
 
     # loading roulette.csv
-    roulette <- read_csv("roulette.csv")
+    roulette <- read_csv("input/roulette.csv")
     roulette <- as.integer(roulette$value)
 
 <br> <br>
@@ -171,7 +171,7 @@ numbers between -1 and 36, independent of each other.
 
     plot(roulette)
 
-![](roulette_simulation_files/figure-markdown_strict/unnamed-chunk-7-1.png)
+![](output/unnamed-chunk-7-1.png)
 
 The spread looks random, let's go ahead and sort the data into
 magnitudes and name each variable.
@@ -210,7 +210,7 @@ in the first 100 spins.
            x = "Number of Spins"
            )
 
-![](roulette_simulation_files/figure-markdown_strict/unnamed-chunk-9-1.png)
+![](output/unnamed-chunk-9-1.png)
 
 <br> <br>
 
@@ -249,7 +249,7 @@ roulette games.
            x = "Number of Spins"
            )
 
-![](roulette_simulation_files/figure-markdown_strict/unnamed-chunk-11-1.png)
+![](output/unnamed-chunk-11-1.png)
 No gambler earns money by the end of the first 100 simulated spins.
 Gambler C is the most interesting to observe because of the massive
 payout upon each win. Briefly, around spin 28, Gambler C reaches a
@@ -270,7 +270,7 @@ different story.
            x = "Number of Spins"
            )
 
-![](roulette_simulation_files/figure-markdown_strict/unnamed-chunk-12-1.png)
+![](output/unnamed-chunk-12-1.png)
 Increasing the sample size by 900 tells us a very different story for
 Gambler C. Their luck takes a turn for the better, ending the 1000 spin
 simulation at over $1000 in earnings. Gambler A and Gambler B keep to
@@ -291,7 +291,7 @@ magnitude.
            x = "Number of Spins"
            )
 
-![](roulette_simulation_files/figure-markdown_strict/unnamed-chunk-13-1.png)
+![](output/unnamed-chunk-13-1.png)
 
 Increasing the sample size to 10,000 spins tells us a completely
 different story for Gambler C. His luck doesn't hold out, and total
@@ -318,7 +318,7 @@ predictable.
            x = "Number of Spins"
            )
 
-![](roulette_simulation_files/figure-markdown_strict/unnamed-chunk-14-1.png)
+![](output/unnamed-chunk-14-1.png)
 
 <br>
 
@@ -473,7 +473,7 @@ project.
         x = "Length of Dry Streak"
         )
 
-![](roulette_simulation_files/figure-markdown_strict/unnamed-chunk-22-1.png)
+![](output/unnamed-chunk-22-1.png)
 
 An excellent skew right distribution shows us that in fact a dry streak
 lasting a single game is by far the most likely outcome (surprise,
@@ -504,7 +504,7 @@ surprise). Gambler A never experiences a dry streak lasting longer than
         x = "Length of Dry Streak"
         )
 
-![](roulette_simulation_files/figure-markdown_strict/unnamed-chunk-23-1.png)
+![](output/unnamed-chunk-23-1.png)
 
 In another beautiful skew right distribution, Gambler B has experienced
 over 600 single-game dry streaks. The length of potential dry streaks
@@ -537,7 +537,7 @@ game dry streak is `0.6 ^ 27` or 0.0001%.
         x = "Length of Dry Streak"
         )
 
-![](roulette_simulation_files/figure-markdown_strict/unnamed-chunk-24-1.png)
+![](output/unnamed-chunk-24-1.png)
 
 As always, Gambler C gives us a more interesting result. The most common
 dry streak lasts two games, not one. The graph is not a simple skew
@@ -551,7 +551,7 @@ dry streak of over 250 games, bummer.
 In conclusion, you probably shouldn't be playing roulette if you're
 looking to earn money. If you're not interested in winning, and you're
 just playing for fun, know that each $10 game will cost you anywhere
-from $0.59 to $0.82 on average.
+from \$0.59 to $0.82 on average.
 
 Don't expect 2:1 payout bets to ever put you ahead for more than a game
 or two, the odds are too consistent. 3:1 payouts tell a very similar.

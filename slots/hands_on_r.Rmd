@@ -1,0 +1,326 @@
+---
+title: "Hands on R Programming Resource Review Notes"
+author: "Fisher Ankney"
+date: "9/27/2018"
+output: html_document
+---
+
+Why coding is better than a GUI - Reproducability, Automation, Communication 
+
+Project 1 - elementary 
+
+Project 2 - Playing Cards 
+- chapter 3 - R Objects 
+
+## atomic vector
+
+atomic vector in R
+- grouping some values together using c(), or just a single value
+
+```{r}
+vector <- c(1,2,3)
+is.vector(vector)
+```
+
+```{r}
+number <- 1
+is.vector(number)
+```
+
+Types of atomic vectors - 
+doubles - regular number, default num 
+integer - num followed by uppercase "L"
+character - string of text 
+logical - T/F 
+complex and raw - don't worry about these
+
+names - attribute to give an atomic vector 
+```{r}
+die <- c(1,2,3,4,5,6)
+names(die) <- c("one", "two", "three","four", "five", "six")
+die
+```
+
+to remove names, set to null
+```{r}
+names(die) <- NULL
+die
+```
+
+## atomic array
+
+manipulate an atomic array by giving it a dim (dimension)
+```{r}
+dim(die) <- c(2,3) # 2 row, 3 col
+die
+dim(die) <- c(3,2)
+die
+```
+
+## matrices 
+
+```{r}
+m <- matrix(die, nrow = 2)
+m
+
+m <- matrix(die, nrow = 2, byrow = TRUE) #fill by row 
+m
+```
+
+## more info on your object
+
+```{r}
+attributes(m)
+```
+
+
+```{r}
+class(m)
+```
+ 
+
+```{r}
+str(m)
+```
+
+## Dates and times 
+
+```{r}
+now <- Sys.time() 
+now
+```
+
+## Factors 
+way of storing categorical information 
+
+```{r}
+# create a vactor with factor()
+gender <- factor(c("male", "female", "male", "female"))
+
+# check type of object 'gender'
+typeof(gender)
+
+# check attributes 'gender'
+attributes(gender)
+
+# see underlying structure of 'gender'
+unclass(gender)
+
+# print 'gender'
+gender
+
+# coercing data structure
+char_gender <- as.character(gender)
+char_gender
+```
+
+## coercion 
+
+everything coerces to character if they're present
+logical will go numeric if it must
+
+```{r}
+# logical to numeric
+sum(c(T,F,T))
+
+# numeric to chr
+char <- c(1,"2")
+typeof(char)
+
+log_to_char <- c(TRUE, "TRUE")
+typeof(log_to_char)
+```
+
+## Lists 
+```{r}
+# first entry coerced, second double, third char, fourth logical
+list <- list(c(1:10, "yeah"), 1:10, "nope", TRUE, list("you found me",2))
+list
+
+# a list is a list
+typeof(list)
+
+# but elements of the list don't have to be 
+typeof(list[[1]])
+
+# unless you want them to 
+typeof(list[[5]])
+
+# access this list of a list by 
+list[[5]][[1]]
+```
+
+
+but lists are ugly, 
+
+## dataframes
+most useful storage structure for data anlysis 
+cant combine different lengths 
+
+```{r}
+library('tidyverse')
+
+read_
+
+```
+
+
+```{r}
+deck <- as_data_frame(read_csv(url("https://gist.githubusercontent.com/garrettgman/9629323/raw/ee5dfc039fd581cb467cc69c226ea2524913c3d8/deck.csv")))
+
+deck
+
+# save the dataset just incase you go offline, or the source is removed
+write_csv(deck, "deck_data.csv")
+```
+
+
+## chapter 4 - R notation
+
+selecting elements of a data frame 
+```{r}
+# positive integers
+deck[1,1] # first element
+deck[1,] # first row
+deck[,1] # first column 
+```
+
+Negative integers, everything but these rows
+```{r}
+deck[,-1] # everything but first column
+```
+
+can also make logical
+```{r}
+deck[TRUE,c(FALSE,TRUE,FALSE)] # all row, only col 2 
+```
+
+
+function to deal the deck 
+```{r}
+deck2 <- deck
+
+deal <- function(cards) {
+  cards[1, ]
+  }
+
+deal(deck)
+```
+
+random deal tho
+```{r}
+random <- sample(1:52)
+random
+
+deck[random,]
+
+deal <- function(cards) {
+  random <- sample(1:52)
+  cards[random, ]
+}
+
+deal(deck)
+```
+
+## Modifying Values - chapter 5 
+
+changing values in place 
+```{r}
+values <- c(0,0,0,0,0)
+values[1]
+
+values[1] <- 1000
+values
+
+```
+
+great way to add variables to dataset is in place
+```{r}
+deck$new <- 1:52
+deck
+```
+
+
+or to destroy them
+```{r}
+deck$new <- NULL
+deck
+```
+
+== not = to evaluate
+```{r}
+a = 7
+a
+a == 7
+```
+
+```{r}
+sum(deck$face == "jack")
+```
+
+change the values of all the jacks
+```{r}
+deck$value[deck$face == "jack"] <- 1000
+deck
+```
+
+logical subsetting is one thing R does super well
+a key to writing vectorized code, chapter 10 
+
+in hearts every ard has a value zero except hearts, which have 1 
+```{r}
+deck$value[deck$suit == "hearts"] <- 1 
+deck$value[deck$suit != "hearts"] <- 0 
+deck$value
+```
+
+
+boolean operators
+```{r}
+# & | xor ! any(x,y,z) all(x,y,z)
+# and or only-1-or not any all
+```
+
+
+give the queen of spades value 13
+```{r}
+queen_of_spades <- deck$face == "queen" & deck$suit == "spades"
+deck$value[queen_of_spades] <- 13 
+deck[queen_of_spades, ]
+```
+
+ready to play hearts
+
+
+extra exercises 
+```{r}
+w <- c(-1,0,1)
+x <- c(5,15)
+y <- "February"
+z <- c("monday",'tuesday', 'wednesday')
+
+# is w positive
+w > 0 
+# is x greater than 10 and less than 20 
+x > 10 & x < 20 
+# is object y the word february
+y == "February"
+# is every value in z a day of the week
+all(z %in% c('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'))
+```
+
+
+new deck 
+```{r}
+deck <- as_data_frame(read_csv(url("https://gist.githubusercontent.com/garrettgman/9629323/raw/ee5dfc039fd581cb467cc69c226ea2524913c3d8/deck.csv")))
+
+deck
+```
+
+Missing Information 
+many functions come with na.rm
+is.na is a useful function 
+NA's are contageous 
+
+
+
