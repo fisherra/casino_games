@@ -1,0 +1,516 @@
+---
+title: "Casino Games - Slots"
+author: "Fisher Ankney"
+date: "9/29/2018"
+output: html_document
+---
+
+### Introduction 
+
+*Hands-On Programming with R* is a great book. project three is to create a slot machine, step by step guide. Then you are to calculate the expected outcome of the slots. I follow along with the book and explain what I'm doing in this blog post continuing the Casino Games series. 
+
+
+Want to create a function that randomly generates a 3 wheel slot machine and calculate the prize.
+
+```
+play() 
+### 0 0 DD 
+### $0 
+```
+
+When approaching a challenging program, the key is to break it up into smaller sets.
+
+problem I - we want to generate 3 symbols based on probabilities. 
+problem II - we want to calculate a prize based on those symbols.
+problem III - we want to format the result as shown above.
+
+<br> 
+
+### Part I - Generate Symbols
+
+
+The possible symbols are diamonds, 7's, 3 Bars, 2 Bars, 1 Bar, a Cherry, and a zero. Their probabilities are 0.03, 0.03, 0.06, 0.10, 0.25, 0.01, and 0.52, respectively. 
+
+<br>
+
+```{r}
+possible_symbols <- c('DD' = 0.03, '7' = 0.03, 'BBB' = 0.06, 'BB' = 0.1, 'B' = 0.25, 'C' = 0.01, '0' = 0.52)
+```
+
+<br> 
+
+```{r}
+possible_symbols
+```
+
+<br> 
+
+Now create a function to randomly sample this space 3 times and display the results. 
+
+<br> 
+```{r}
+get_symbols <- function() {
+  
+  # possible symbols are defined as the names of the possible_symbols vector
+  wheel <- names(possible_symbols)
+  # symbols take a sample from variable wheel
+  symbols <- sample(
+                    wheel,
+  # the sample has size of 3 symbols
+                    size = 3,
+  # the symbols are taken and replaced so they can show up two or three times
+                    replace = T, 
+  # the probability of each symbol is taken from possible_symbols vector
+                    prob <- possible_symbols
+                    )
+  # the generated symbols are now displayed
+  symbols
+  
+}
+
+  # test the function
+get_symbols()
+```
+
+<br> 
+
+Looks good!
+
+<br> 
+
+### Part II - Calculate Prize
+
+calculating the prize is a little more difficult. 
+
+Basically it's scored like this - 
+
+Each play costs 1 dollar. 
+
+3 of a kind gets you a set dollar amount depending on symbols
+cherries give you an automatic dollar amount 
+diamonds are wild, and double your previous payout 
+
+
+symbols = payout
+DD DD DD = $100
+7 7 7 = $80 
+BBB BBB BBB = $40 
+BB BB BB = $25
+B B B = $10 
+C C C = $10 
+
+Any number of bars = $5
+
+C C * (\* is wild) = $5
+C * C = $5
+* C C = $5
+* * C = $2
+* C * = $2 
+C \* * = $2
+
+Diamonds double payout, not treating as wildcard though
+
+DD DD DD would payout $800 
+
+<br> 
+
+We have to do eight small tasks
+
+```
+* three symbols are generated 
+
+1.  if the symbols are three of the same kind, 
+2.    score the spin based on which 3 symbols
+
+3.    if the symbols are all a type of bar
+4.      score the spin the set amount for all bars
+ 
+5.    if any of the symbols are cherries
+6.       count them up and pay out appropriate amount
+    
+7.     finally, count how many diamonds
+8.       multiply the earnings by number of diamonds 
+
+*  prize is displayed
+```
+<br> 
+
+#### Task 1. Test if Symbols are 3-of-a-kind
+
+first we'll make test symbols so we don't have to run the function get_symbols over and over to test our cases 
+
+```{r}
+symbols_1 <- c('7', '7', '7')
+symbols_2 <- c('0', '7', '7')
+symbols_3 <- c('0', '0', '7')
+```
+
+<br> 
+
+a way to test if the symbols are three of a kind is using the `unique` and `length` functions. 
+
+```{r}
+symbols_1
+
+unique(symbols_1)
+
+length(unique(symbols_1))
+```
+
+<br> 
+
+```{r}
+symbols_2
+length(unique(symbols_2))
+
+symbols_3 
+length(unique(symbols_3))
+```
+
+<br> 
+
+```{r, eval=f}
+same <- length(unique(symbols)) == 1
+```
+
+will come back as same <- true if 3 of a kind, same <- false if not 
+
+<br> 
+
+
+#### Task 2. Score The 3-of-a-kind Spins
+
+use a lookup table for this 
+```{r}
+payouts <- c('DD' = 100,
+             '7' = 80, 
+             'BBB' = 40,
+             'BB' = 25, 
+             'B' = 10, 
+             'C' = 10, 
+             '0' = 0
+             )
+
+payouts
+```
+
+<br> 
+
+test it 
+
+<br> 
+
+```{r}
+payouts[['DD']]
+
+symbols_1
+
+payouts[[symbols_1[[1]]]]
+```
+
+<br> 
+
+works, so the final code we insert looks like this 
+
+<br> 
+
+```{r}
+# define look-up table 'payouts'
+payouts <- c('DD' = 100,'7' = 80, 'BBB' = 40, 'BB' = 25, 'B' = 10, 'C' = 10, '0' = 0)
+
+# assign prize based on symbol match in payout
+prize <- payouts[[symbols[[1]]]]
+```
+
+
+<br> 
+
+#### Task 3. Test if symbols are all a version of 'bar'
+
+new testers
+```{r}
+symbols_1 <- c('B', 'BB', 'BBB')
+symbols_2 <- c('0', 'B', '0')
+symbols_3 <- NA
+```
+
+<br> 
+
+really want to know if all 3 symbols are any of B, BB, BBB, can use the `all` function and `%in%` operator
+```{r}
+bars <- all(symbols_1 %in% c('B','BB','BBB'))
+bars
+
+bars <- all(symbols_2 %in% c('B','BB','BBB'))
+bars
+```
+
+<br> 
+
+code to test will actually look like this
+
+```{r, eval = F}
+bars <- all(symbols %in% c('B','BB','BBB'))
+```
+
+<br>
+
+#### Task 4. Assign Prize for Bars 
+
+Easy. 
+
+<br> 
+
+```{r}
+prize <- 5 
+```
+
+<br>
+
+#### Task 5. Test if Cherries are Present 
+
+New test parameters
+```{r}
+symbols_1 <- c('C', 'C', '7')
+symbols_2 <- c('0', '0', 'C')
+symbols_3 <- c('0', '0', '0')
+```
+
+<br> 
+
+```{r}
+cherries <- sum(symbols_1 == 'C')
+cherries
+
+cherries <- sum(symbols_2 == 'C')
+cherries
+
+cherries <- sum(symbols_3 == 'C')
+cherries
+```
+
+<br> 
+
+in code it will look like 
+```{r}
+cherries <- sum(symbols == 'C')
+cherries
+
+```
+
+<br> 
+
+#### Task 6. Cherries Payout 
+
+another lookup table! 
+```{r}
+cherries_0 <- 0
+cherries_1 <- 1
+cherries_2 <- 2
+
+cherries_pay <- c(0, 2, 5)
+
+cherries_pay[[cherries_0 + 1]]
+cherries_pay[[cherries_1 + 1]]
+cherries_pay[[cherries_2 + 1]]
+```
+
+<br> 
+
+generalized code will look like this 
+
+```{r}
+cherries_pay <- c(0, 2, 5)
+
+prize <- cherries_pay[[cherries + 1]]
+```
+
+<br> 
+
+#### Task 7. Diamond Count
+
+just like cherry count
+```{r}
+diamonds <- sum(symbols == 'DD')
+diamonds
+```
+
+<br>
+
+#### Task 8. Diamonds Multiplier
+
+```{r}
+diamonds_0 <- 0 
+diamonds_1 <- 1 
+diamonds_2 <- 2
+
+prize <- 100 
+
+prize * 2 ^ diamonds_0
+prize * 2 ^ diamonds_1
+prize * 2 ^ diamonds_2
+```
+
+<br> 
+
+generalized code 
+
+```{r}
+prize <- prize * 2 ^ diamonds
+```
+
+<br> 
+
+#### Putting it All Together
+
+<br> 
+
+we started with this general guide
+```
+* three symbols are generated 
+
+1.  if the symbols are three of the same kind, 
+2.    score the spin based on which 3 symbols
+
+3.    if the symbols are all a type of bar
+4.      score the spin the set amount for all bars
+ 
+5.    if any of the symbols are cherries
+6.       count them up and pay out appropriate amount
+    
+7.     finally, count how many diamonds
+8.       multiply the earnings by number of diamonds 
+
+*  prize is displayed
+```
+
+<br> 
+
+This guide might be a little more verbose 
+
+```
+define same 
+define same scores
+
+define bars
+define bar scores
+
+define cherries
+define cherries scores
+
+define diamonds
+define diamonds scores
+
+if (same = T) {
+  same scores
+} else if (bars = T) { 
+  bars scores
+} else if (cherries = T) {
+  cherries score
+} else if (diamonds = T) {}
+  score diamonds
+```
+
+<br> 
+
+now insert code we made
+
+```{r}
+#### Create Function 
+score <- function(symbols) {
+
+### Definitions 
+
+#  define default prize 
+prize <- 0 
+#  define same 
+same <- length(unique(symbols)) == 1
+#  define same prize
+same_table <- c('DD' = 100,'7' = 80, 'BBB' = 40, 'BB' = 25, 'B' = 10, 'C' = 10, '0' = 0)
+same_prize <- same_table[[symbols[[1]]]]
+
+#  define bars
+bars <- all(symbols %in% c('B','BB','BBB'))
+#  define bar scores
+bars_prize <- 5 
+
+#  define cherries
+cherries <- sum(symbols == 'C')
+#  define cherries scores
+cherries_table <- c(0, 2, 5)
+cherries_prize <- cherries_table[[cherries + 1]]
+
+#  define diamonds
+diamonds <- sum(symbols =="DD")
+#  define diamonds scores
+diamonds_prize <- same_prize * 2 ^ diamonds
+diamonds_prize <- diamonds_prize + cherries_prize * 2 ^ diamonds
+
+
+### If / Then 
+
+#  if same, same prize
+if (same) {
+  prize <- same_prize
+# if bars, bars prize
+} else if (bars) {
+  prize <- bars_prize
+# if cherries, cherries prize
+} else if (cherries > 0) {
+  prize <- cherries_prize
+# if diamonds, diamonds multiplier
+}
+
+if (diamonds > 0) {
+  prize <- diamonds_prize
+}
+
+
+### Display Prize
+prize 
+
+### End Function
+}
+
+```
+
+<br> 
+
+test function 
+
+```{r}
+symbols <- c('7', '7', '7')
+score(symbols)
+
+symbols <- c('B', 'BBB', 'B')
+score(symbols)
+
+symbols <- c('C', 'B', 'B')
+score(symbols)
+
+symbols <- c('DD', 'DD', 'DD')
+score(symbols)
+
+symbols <- c('0', '0', '0')
+score(symbols)
+```
+
+<br> 
+
+nice. 
+
+<br> 
+
+### Part III - Format Results 
+
+Put both together, use a bit of flashy S3
+project complete 
+
+
+Until next time, <br> 
+
+\- Fisher
+
+
+
+
