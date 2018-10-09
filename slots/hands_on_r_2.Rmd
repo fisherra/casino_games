@@ -28,7 +28,6 @@ get_symbols <- function() {
         )
   print(symbols)
 }
-
 ```
 
 Test it 

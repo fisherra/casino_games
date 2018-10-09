@@ -1,9 +1,14 @@
 ---
-title: "hands_on_r_2"
+title: "hands_on_r_3"
 author: "Fisher Ankney"
 date: "9/29/2018"
 output: html_document
 ---
+
+```{r}
+library('tidyverse')
+```
+
 
 # chapter 9 - loops 
 
